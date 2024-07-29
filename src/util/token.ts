@@ -1,8 +1,18 @@
 import jwt from "jsonwebtoken";
 
 /** Generates a JWT token */
-export const generateToken = async (id: string, email: string) => {
+export const generateJWTToken = async (id: string, email: string) => {
   return jwt.sign({ id, email }, process.env.JWT_SECRET!, {
     expiresIn: "30d",
   });
+};
+
+/** Generates 6 digit email verification token */
+export const generateVerificationOTP = () => {
+  const digits = "0123456789";
+  let otp = "";
+  for (let i = 0; i < 6; i++) {
+    otp += digits.charAt(Math.floor(Math.random() * digits.length));
+  }
+  return otp;
 };

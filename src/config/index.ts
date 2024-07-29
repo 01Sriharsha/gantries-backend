@@ -21,4 +21,24 @@ export const config = {
     /** api prefix */
     prefix: "/api" as const,
   },
+  /** Google OAuth Credentials */
+  google: {
+    client: {
+      id: process.env.GOOGLE_CLIENT_ID!,
+      secret: process.env.GOOGLE_CLIENT_SECRET!,
+    },
+  },
+  /** Google OAuth Credentials */
+  mail: {
+    admin: {
+      mail: process.env.ADMIN_EMAIL!,
+      password: process.env.ADMIN_EMAIL_PASSWORD!,
+    },
+    port: process.env.MAIL_PORT!,
+  },
+
+  twilio: {
+    accountSid: process.env.TWILIO_ACCOUNT_SID!,
+    authToken: process.env.TWILIO_AUTH_TOKEN!,
+  },
 };

@@ -22,11 +22,15 @@ const userSchema = new Schema<IUser>(
       required: true,
       unique: true,
     },
-    password: {
+    phone: {
       type: String,
       required: true,
+      unique: true,
     },
-    verifyToken: {
+    password: {
+      type: String,
+    },
+    verifyOTP: {
       type: String,
       required: false,
     },
@@ -34,6 +38,10 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       required: true,
       default: false,
+    },
+    isOAuthUser: {
+      type: Boolean,
+      required: false,
     },
     role: {
       type: String,

@@ -1,17 +1,23 @@
 import { z } from "zod";
 export const UserSchema = z.object({
   firstname: z
-    .string()
-    .min(1, { message: "Firstname is required" })
+    .string({ required_error: "Firstname is required" })
     .max(50, { message: "Firstname should not exceed 50 characters" }),
   lastname: z
-    .string()
-    .min(1, { message: "Lastname is required" })
+    .string({ required_error: "Lastname is required" })
     .max(50, { message: "Lastname should not exceed 50 characters" }),
-  email: z.string().email({ message: "Invalid email address" }),
+  email: z
+    .string({ required_error: "Email is required" })
+    .email({ message: "Invalid email address" }),
   password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters long" }),
+  phone: z.string().length(10, { message: "Invalid phone number" }),
+});
+
+export const LoginSchema = z.object({
+  email: z.string({ required_error: "Email is required" }),
+  password: z.string({ required_error: "Password is required" }),
 });
 
 export const StudentSchema = z.object({
@@ -40,3 +46,4 @@ export const StudentSchema = z.object({
 
 export type UserSchema = z.infer<typeof UserSchema>;
 export type StudentSchema = z.infer<typeof StudentSchema>;
+export type LoginSchema = z.infer<typeof LoginSchema>;

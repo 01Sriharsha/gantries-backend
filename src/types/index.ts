@@ -9,8 +9,10 @@ export type User = {
   firstname: string;
   lastname: string;
   email: string;
+  phone: string;
   password: string;
-  verifyToken: string;
+  verifyOTP: string;
+  isOAuthUser: boolean;
   isVerified: boolean;
   createdAt: Date;
   updatedAt: Date;

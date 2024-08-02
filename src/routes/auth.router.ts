@@ -1,6 +1,7 @@
 import passport from "passport";
 import { Router } from "express";
 import {
+  authenticateMe,
   handleOAuthLogin,
   login,
   logout,
@@ -27,7 +28,8 @@ export const authRouter = (): Router => {
   router.post("/register", register);
   router.post("/login", login);
   router.post("/logout", authMiddleware, logout);
-  router.post("/verify-otp", authMiddleware, verifyOTP);
+  router.post("/verify", authMiddleware, verifyOTP);
+  router.get("/me", authMiddleware, authenticateMe);
 
   return router;
 };

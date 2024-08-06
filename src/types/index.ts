@@ -8,6 +8,7 @@ export interface AuthRequest extends Request {
 export type User = {
   firstname: string;
   lastname: string;
+  username: string;
   email: string;
   phone: string;
   password: string;

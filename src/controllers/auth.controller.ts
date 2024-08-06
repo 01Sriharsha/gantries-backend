@@ -156,7 +156,7 @@ export const verifyOTP = asyncHandler(async (req: AuthRequest, res) => {
 });
 
 /** Authenticates the current logged in user whenever hit to this endpoint */
-export const authenticateMe = asyncHandler(async (req, res) => {
+export const authenticateMe = asyncHandler(async (req : AuthRequest, res) => {
   if (!req.user) {
     res.status(401).json({ message: "Unauthorized user" });
   }

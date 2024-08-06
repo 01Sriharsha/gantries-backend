@@ -17,6 +17,7 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: true,
     },
+    username: String,
     email: {
       type: String,
       required: true,
@@ -58,6 +59,7 @@ userSchema.pre("save", async function (next) {
     return next();
   }
   this.password = await bcrypt.hash(this.password, 10);
+  this.username = this.firstname + " " + this.lastname;
   next();
 });
 

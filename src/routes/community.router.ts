@@ -9,20 +9,22 @@ import {
   subscribeToCommunity,
   getCommunityByName,
   getAllCommunities,
+  isSubscribed,
 } from "../controllers/community.controller";
 
 /** Community Routes */
 export const communityRouter = (): Router => {
   const router = Router();
 
-  router.post("/", authMiddleware, createCommunity);
+  router.post("/", createCommunity);
   router.get("/", getAllCommunities);
   router.get("/:id", getCommunityById);
   router.get("/name/:name", getCommunityByName);
-  router.put("/:id", authMiddleware, updateCommunity);
-  router.delete("/:id", authMiddleware, deleteCommunity);
-  router.post("/:id/join", authMiddleware, addMemberToCommunity);
-  router.post("/:id/subscribe", authMiddleware, subscribeToCommunity);
+  router.put("/:id", updateCommunity);
+  router.delete("/:id", deleteCommunity);
+  router.post("/:id/join", addMemberToCommunity);
+  router.post("/:id/subscribe", subscribeToCommunity);
+  router.post("/:id/isSubscribed", isSubscribed);
 
   return router;
 };

@@ -6,6 +6,8 @@ import { apiResponse } from "../util/api-response";
 import { asyncHandler } from "../util/async-handler";
 import { getOrCreateTags } from "../util/helper";
 import { ITag } from "../models/tag.model";
+import { PopulateOptions } from "mongoose";
+import { paginate } from "../util/paginate";
 
 // Create a new post
 export const createPost = asyncHandler(
@@ -43,44 +45,111 @@ export const createPost = asyncHandler(
 );
 
 // Get all posts
-export const getAllPosts = asyncHandler(async (req: Request, res: Response) => {
-  const posts = await PostModel.find()
-    .populate("createdBy", "_id firstname lastname email")
-    .populate("community", "_id name description");
+export const getAllPosts = asyncHandler(async (req, res: Response) => {
+  // const posts = await PostModel.find()
+  //   .populate("createdBy", "_id firstname lastname email")
+  //   .populate("community", "_id name description");
 
-  return apiResponse(res, 200, { message: "", data: posts });
+  const { page = 1, limit = 10 } = req.query;
+
+  const populateOptions: Array<string | PopulateOptions> = [
+    { path: "createdBy", select: "_id username email" },
+    { path: "community", select: "_id name picture" },
+    { path: "tags", select: "name" },
+  ];
+
+  const paginationResult = await paginate(
+    PostModel, //model to fetch from..
+    {}, //based on what to fetch
+    { page: Number(page), limit: Number(limit) }, //paginate params
+    populateOptions //populate necessary fields
+  );
+
+  const postsArr = [];
+  const posts = paginationResult.data;
+  for (let i = 0; i < posts.length; i++) {
+    const post = posts[i];
+    let response = { ...post.toObject(), isLiked: false };
+    if (req.user) {
+      const isLiked = post.likes.includes(req.user.id);
+      response = { ...response, isLiked };
+    }
+    postsArr.push(response);
+  }
+
+  paginationResult.data = postsArr;
+
+  return apiResponse(res, 200, { message: "", data: paginationResult });
 });
 
 // Get all posts by communityId
 export const getAllPostsByCommunity = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req, res: Response) => {
     const { communityId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
     const community = await CommunityModel.findById(communityId);
     if (!community) {
       return apiResponse(res, 404, { message: "Community not found" });
     }
-    const posts = await PostModel.find({ community: communityId }).populate(
-      "createdBy",
-      "_id firstname lastname email"
+    // const posts = await PostModel.find({ community: communityId })
+    //   .populate("createdBy", "_id firstname lastname email")
+    //   .populate("createdBy", "_id username email")
+    //   .populate("community", "_id name picture")
+    //   .populate("tags", "name");
+
+    const populateOptions: Array<string | PopulateOptions> = [
+      { path: "createdBy", select: "_id username email" },
+      { path: "community", select: "_id name picture" },
+      { path: "tags", select: "name" },
+    ];
+
+    const paginationResult = await paginate(
+      PostModel, //model to fetch from..
+      { community: communityId }, //based on what to fetch
+      { page: Number(page), limit: Number(limit) }, //paginate params
+      populateOptions //populate necessary fields
     );
 
-    return apiResponse(res, 200, { message: "", data: posts });
+    const postsArr = [];
+    const posts = paginationResult.data;
+    for (let i = 0; i < posts.length; i++) {
+      const post = posts[i];
+      let response = { ...post.toObject(), isLiked: false };
+      if (req.user) {
+        const isLiked = post.likes.includes(req.user.id);
+        response = { ...response, isLiked };
+      }
+      postsArr.push(response);
+    }
+
+    paginationResult.data = postsArr;
+
+    return apiResponse(res, 200, { message: "", data: paginationResult });
   }
 );
 
 // Get a post by ID
-export const getPostById = asyncHandler(async (req: Request, res: Response) => {
+export const getPostById = asyncHandler(async (req, res: Response) => {
   const { id } = req.params;
 
   const post = await PostModel.findById(id)
-    .populate("createdBy", "_id firstname lastname email")
-    .populate("community", "_id name description");
+    .populate("createdBy", "_id username email")
+    .populate("community", "_id name picture")
+    .populate("tags", "name");
 
   if (!post) {
     return apiResponse(res, 404, { message: "Post not found" });
   }
 
-  return apiResponse(res, 200, { data: post });
+  let response = { ...post.toObject(), isLiked: false };
+
+  if (req.user) {
+    const isLiked = post.likes.includes(req.user.id);
+    response = { ...response, isLiked };
+    console.log("isLiked", response.isLiked);
+  }
+
+  return apiResponse(res, 200, { data: response });
 });
 
 // Update a post
@@ -148,8 +217,7 @@ export const deletePost = asyncHandler(
   }
 );
 
-// Like a post
-export const likePost = asyncHandler(
+export const toggleLikePost = asyncHandler(
   async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
 
@@ -163,51 +231,27 @@ export const likePost = asyncHandler(
       return apiResponse(res, 404, { message: "Post not found" });
     }
 
-    if (post.likes.includes(req.user.id)) {
-      return apiResponse(res, 400, { message: "Post already liked" });
+    let isLiked = post.likes.includes(req.user.id);
+
+    if (isLiked) {
+      // Unlike the post
+      const filtered = post.likes.filter(
+        (like) => like.toString() !== req.user.id.toString()
+      );
+      post.likes = filtered;
+      isLiked = false;
+    } else {
+      // Like the post
+      post.likes.push(req.user.id);
+      isLiked = true;
     }
 
-    post.likes.push(req.user.id);
     post.likeCount = post.likes.length;
-
     await post.save();
 
     return apiResponse(res, 200, {
-      message: "Post liked successfully",
-      data: post,
-    });
-  }
-);
-
-// Unlike a post
-export const unlikePost = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    const { id } = req.params;
-
-    if (!req.user) {
-      return apiResponse(res, 401, { message: "Unauthorized user" });
-    }
-
-    const post = await PostModel.findById(id);
-
-    if (!post) {
-      return apiResponse(res, 404, { message: "Post not found" });
-    }
-
-    if (!post.likes.includes(req.user.id)) {
-      return apiResponse(res, 400, { message: "Post not liked yet" });
-    }
-
-    post.likes = post.likes.filter(
-      (like) => like.toString() !== req.user.id.toString()
-    );
-    post.likeCount = post.likes.length;
-
-    await post.save();
-
-    return apiResponse(res, 200, {
-      message: "Post unliked successfully",
-      data: post,
+      message: `Post ${isLiked ? "Liked" : "Unliked"} successfully`,
+      data: { ...post, isLiked },
     });
   }
 );

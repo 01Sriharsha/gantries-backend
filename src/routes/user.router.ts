@@ -6,7 +6,7 @@ import { saveUserInfo } from "../controllers/user.controller";
 export const userRouter = (): Router => {
   const router = Router();
 
-  router.post("/save-info", authMiddleware, saveUserInfo);
+  router.post("/basic-info", authMiddleware, saveUserInfo);
 
   return router;
 };

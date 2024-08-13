@@ -5,24 +5,22 @@ import {
   getPostById,
   updatePost,
   deletePost,
-  likePost,
-  unlikePost,
   getAllPosts,
   getAllPostsByCommunity,
+  toggleLikePost,
 } from "../controllers/post.controller";
 
 /** Post Routes */
 export const postRouter = (): Router => {
   const router = Router();
 
-  router.post("/", authMiddleware, createPost);
+  router.post("/", createPost);
   router.get("/", getAllPosts);
   router.get("/community/:communityId", getAllPostsByCommunity);
-  router.get("/:id", getPostById);
-  router.put("/:id", authMiddleware, updatePost);
-  router.delete("/:id", authMiddleware, deletePost);
-  router.post("/:id/like", authMiddleware, likePost);
-  router.post("/:id/unlike", authMiddleware, unlikePost);
+  router.get("/:id" ,  getPostById);
+  router.put("/:id", updatePost);
+  router.delete("/:id", deletePost);
+  router.post("/:id/like", toggleLikePost);
 
   return router;
 };

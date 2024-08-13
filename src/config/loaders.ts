@@ -6,6 +6,7 @@ import { connectDB } from "../lib/db";
 import { errorHandler } from "../middleware/error.middleware";
 import { globalRouter } from "../routes";
 import { OAuthConfig } from "../lib/passport";
+import { authMiddleware } from "../middleware/auth.middleware";
 
 export const loaders = async ({
   app,

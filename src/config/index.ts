@@ -37,8 +37,15 @@ export const config = {
     port: process.env.MAIL_PORT!,
   },
 
+  /** Twilio Credentials */
   twilio: {
     accountSid: process.env.TWILIO_ACCOUNT_SID!,
     authToken: process.env.TWILIO_AUTH_TOKEN!,
+  },
+
+  /** Uploadthing Credentials */
+  uploadthing: {
+    appId: process.env.UPLOADTHING_APP_ID!,
+    secret: process.env.UPLOADTHING_SECRET!,
   },
 };

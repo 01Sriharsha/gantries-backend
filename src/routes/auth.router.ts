@@ -28,7 +28,7 @@ export const authRouter = (): Router => {
   router.post("/register", register);
   router.post("/login", login);
   router.post("/logout", authMiddleware, logout);
-  router.post("/verify", authMiddleware, verifyOTP);
+  router.post("/verify", verifyOTP);
   router.get("/me", authMiddleware, authenticateMe);
 
   return router;

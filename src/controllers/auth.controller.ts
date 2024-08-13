@@ -5,6 +5,7 @@ import { AuthRequest } from "../types";
 import { cookie } from "../util/constants";
 import { sendSMS } from "../lib/twilio";
 import { asyncHandler } from "../util/async-handler";
+import { UserModel } from "../models/user.model";
 
 /** Regsiter Endpoint */
 export const register = asyncHandler(async (req, res) => {
@@ -14,14 +15,13 @@ export const register = asyncHandler(async (req, res) => {
 
   //validate the request body with the defined schema
   if (error) {
-    return res.status(400).json({ message: error?.errors[0].message });
+    return res.status(400).json({ message: error?.errors[0]?.message });
   }
   //find existing user
   const userExists = await db.User.findOne({
     phone: data.phone,
   });
   if (userExists) {
-    console.error("DB Error:", userExists.errors.errors[0].message);
     return res.status(400).json({ message: "User already exists" });
   }
 
@@ -78,6 +78,12 @@ export const login = asyncHandler(async (req, res) => {
   }
 
   if (!existingUser.isVerified) {
+    //send sms
+    const verifyOTP = existingUser.verifyOTP;
+    await sendSMS(
+      existingUser.phone,
+      `Your verification OTP for Gantries By eSamudaay is: ${verifyOTP}`
+    );
     return res.status(400).json({
       message: "You have not verified the phone number! Please verify it!!",
     });
@@ -123,16 +129,15 @@ export const logout = asyncHandler(async (req: AuthRequest, res) => {
 });
 
 /** OTP verification endpoint */
-export const verifyOTP = asyncHandler(async (req: AuthRequest, res) => {
-  if (!req.user) {
-    return res.status(401).json({ message: "Not Authorized" });
+export const verifyOTP = asyncHandler(async (req, res) => {
+  const { phone, otp } = req.body;
+  if (!phone) {
+    return res.status(401).json({ message: "Phone number is missing!" });
   }
-
-  const { otp } = req.body;
   if (!otp) {
     return res.status(401).json({ message: "verification otp missing!" });
   }
-  const user = await db.User.findById(req.user.id);
+  const user = await db.User.findOne({ phone });
   if (!user) {
     return res.status(401).json({ message: "User not found" });
   }
@@ -150,13 +155,20 @@ export const verifyOTP = asyncHandler(async (req: AuthRequest, res) => {
     throw new Error("Failed to verify user!");
   }
   const username = user.firstname + " " + user.lastname;
+  const { password, verifyOTP, ...verifiedUser } = user.toObject();
+  const token = await generateJWTToken(user.id || user._id, user.phone);
+  //add cookie
+  res.cookie(cookie.name, token, cookie.options);
   return res
     .status(200)
-    .json({ message: `Verification successfull! Welcome ${username}` });
+    .json({
+      message: `Verification successfull! Welcome ${username}`,
+      data: verifiedUser,
+    });
 });
 
 /** Authenticates the current logged in user whenever hit to this endpoint */
-export const authenticateMe = asyncHandler(async (req : AuthRequest, res) => {
+export const authenticateMe = asyncHandler(async (req: AuthRequest, res) => {
   if (!req.user) {
     res.status(401).json({ message: "Unauthorized user" });
   }

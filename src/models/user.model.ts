@@ -18,6 +18,10 @@ const userSchema = new Schema<IUser>(
       required: true,
     },
     username: String,
+    picture: {
+      type: String,
+      default: "",
+    },
     email: {
       type: String,
       required: true,

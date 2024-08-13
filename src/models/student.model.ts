@@ -18,28 +18,33 @@ const studentSchema = new Schema<IStudent>(
       type: String,
       required: true,
     },
-    gender: {
+    college: {
       type: String,
       required: true,
     },
-    institution: {
+    course: {
       type: String,
       required: true,
     },
-    qualification: {
+    yearOfEnding: {
       type: String,
       required: true,
     },
-    fieldOfStudy: {
+    aim: {
+      type: String,
+      required: true,
+    },
+    plan: {
       type: String,
       required: true,
     },
     interests: {
       type: [String],
-      required: true,
+      // required: true,
     },
     //optional
     bio: String,
+    gender: String,
     profilePicture: String,
     socialLinks: [String],
   },

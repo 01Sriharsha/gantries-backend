@@ -12,6 +12,7 @@ export type User = {
   email: string;
   phone: string;
   password: string;
+  picture: string;
   verifyOTP: string;
   isOAuthUser: boolean;
   isVerified: boolean;
@@ -24,11 +25,13 @@ export type Student = {
   user_id: Document["_id"];
   dateOfBirth: String;
   gender: string;
-  institution: string;
-  qualification: string;
-  fieldOfStudy: string;
+  college: string;
+  yearOfEnding: string;
+  course: string;
   interests: string[];
   bio: string;
+  aim: string;
+  plan: string;
   profilePicture: string;
   socialLinks: String[];
 };

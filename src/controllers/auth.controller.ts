@@ -14,14 +14,13 @@ export const register = asyncHandler(async (req, res) => {
 
   //validate the request body with the defined schema
   if (error) {
-    return res.status(400).json({ message: error?.errors[0].message });
+    return res.status(400).json({ message: error?.errors[0]?.message });
   }
   //find existing user
   const userExists = await db.User.findOne({
     phone: data.phone,
   });
   if (userExists) {
-    console.error("DB Error:", userExists.errors.errors[0].message);
     return res.status(400).json({ message: "User already exists" });
   }
 

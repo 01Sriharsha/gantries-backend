@@ -14,9 +14,18 @@ export const createComment = asyncHandler(
       return apiResponse(res, 401, { message: "Unauthorized user" });
     }
 
-    const post = await PostModel.findById(postId);
+    const post = await PostModel.findById(postId).populate(
+      "createdBy",
+      "_id username picture"
+    );
     if (!post) {
       return apiResponse(res, 404, { message: "Post not found" });
+    }
+
+    if (post.createdBy === req.user.id) {
+      return apiResponse(res, 400, {
+        message: "You cannot comment on your own post",
+      });
     }
 
     const comment = new CommentModel({
@@ -26,12 +35,17 @@ export const createComment = asyncHandler(
     });
 
     await comment.save();
-    post.comments.push(comment.id);
+    post.comments.push(comment._id);
     await post.save();
+
+    const savedComment = await CommentModel.findById(comment._id).populate(
+      "createdBy",
+      "_id username email picture"
+    );
 
     return apiResponse(res, 201, {
       message: "Comment created successfully",
-      data: comment,
+      data: savedComment,
     });
   }
 );
@@ -42,8 +56,8 @@ export const getCommentsByPostId = asyncHandler(
     const { postId } = req.params;
 
     const comments = await CommentModel.find({ post: postId })
-      .populate("createdBy", "_id firstname lastname email")
-      .populate("post", "_id title content");
+      .populate("createdBy", "_id username email")
+      .sort({ updatedAt: -1 });
 
     return apiResponse(res, 200, { data: comments });
   }

@@ -54,3 +54,21 @@ export const saveUserInfo = asyncHandler(async (req, res) => {
     data: response,
   });
 });
+
+export const getUserById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const user = await UserModel.findById(id).select("-password -verifyOTP");
+
+  if (!user) {
+    return apiResponse(res, 404, { message: "User not found" });
+  }
+
+  if (user.role === "STUDENT") {
+    const student = await StudentModel.findOne({ user_id: user._id });
+    return apiResponse(res, 200, {
+      data: { ...user.toObject(), student: student.toObject() },
+    });
+  }
+
+  return apiResponse(res, 200, { data: user.toObject() });
+});

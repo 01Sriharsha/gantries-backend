@@ -221,6 +221,9 @@ export const toggleLikePost = asyncHandler(
   async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
 
+    console.log(id);
+    
+
     if (!req.user) {
       return apiResponse(res, 401, { message: "Unauthorized user" });
     }

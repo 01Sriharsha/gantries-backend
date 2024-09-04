@@ -1599,17 +1599,12 @@ packages:
       zod: 3.23.8
     transitivePeerDependencies:
       - '@aws-sdk/credential-providers'
-      - '@effect/platform'
       - '@mongodb-js/zstd'
       - debug
-      - fastify
       - gcp-metadata
-      - h3
       - kerberos
       - mongodb-client-encryption
-      - next
       - snappy
       - socks
       - supports-color
-      - tailwindcss
     dev: false

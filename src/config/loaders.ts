@@ -5,8 +5,6 @@ import { config } from "./index";
 import { connectDB } from "../lib/db";
 import { errorHandler } from "../middleware/error.middleware";
 import { globalRouter } from "../routes";
-import { OAuthConfig } from "../lib/passport";
-import { authMiddleware } from "../middleware/auth.middleware";
 
 export const loaders = async ({
   app,
@@ -26,7 +24,7 @@ export const loaders = async ({
   app.use(cookieParser());
 
   //Enable Passport(OAuth)
-  app.use(OAuthConfig.initialize());
+  // app.use(OAuthConfig.initialize());
 
   //Global error handler
   app.use(errorHandler);

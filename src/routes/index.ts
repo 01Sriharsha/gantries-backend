@@ -13,6 +13,8 @@ import { collegeRouter } from "./college.router";
 import { friendrequestRouter } from "./friendrequests.router";
 import {friendsRouter} from "./friends.router";
 import {acceptRejectRouter} from "./acceptorreject.route";
+import { conversationRouter } from "./conversation.router";
+
 export const globalRouter = (): Router => {
   const router = Router();
 
@@ -28,5 +30,7 @@ export const globalRouter = (): Router => {
   router.use("/friendrequest",authMiddleware,friendrequestRouter());
   router.use("/getfriends",authMiddleware,friendsRouter());
   router.use("/acceptOrReject",authMiddleware,acceptRejectRouter());
+  router.use("/conversation",authMiddleware,conversationRouter());
+
   return router;
 };

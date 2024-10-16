@@ -10,6 +10,7 @@ import { uploadRouter } from "./upload.router";
 import { commentRouter } from "./comment.router";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { collegeRouter } from "./college.router";
+import { conversationRouter } from "./conversation.router";
 
 export const globalRouter = (): Router => {
   const router = Router();
@@ -23,6 +24,7 @@ export const globalRouter = (): Router => {
   router.use("/post", authMiddleware, postRouter());
   router.use("/comment", authMiddleware, commentRouter());
   router.use("/upload", authMiddleware, uploadRouter());
+  router.use("/conversation",authMiddleware,conversationRouter());
 
   return router;
 };

@@ -42,7 +42,7 @@ export class WebSocketServer {
           
           const newMessage = new MessageModel({
             receiverId: receiverId,
-            sender: senderId,
+            senderId: senderId,
             content,
             sentAt: new Date(),
           });
@@ -57,10 +57,13 @@ export class WebSocketServer {
 
         // Handle fetching messages between users
         if (parsedMessage.type === 'GET_MESSAGES') {
-          const { receiverId } = parsedMessage;
+          const { receiverId,senderId } = parsedMessage;
 
           try {
-            const messages = await MessageModel.find({ receiverId: receiverId },"content sentAt")
+            const messages = await MessageModel.find({$or: [
+              { receiverId: receiverId, senderId: senderId }, // Messages sent to receiver from sender
+              { receiverId: senderId, senderId: receiverId }  // Messages sent to sender from receiver
+            ]},"content sentAt").populate("senderId receiverId","username")
               .sort({ sentAt: 1 }); // Sort messages by sent date
 
             // Send the messages back to the requesting user

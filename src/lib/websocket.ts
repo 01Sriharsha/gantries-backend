@@ -3,6 +3,7 @@ import { Application } from 'express';
 import { MessageModel } from '../models/message.model';
 import { conversationModel } from '../models/conversation.model';
 
+
 interface UserConnection {
   userId: string;
   ws: WebSocket;
@@ -35,11 +36,12 @@ export class WebSocketServer {
 
         // Handle sending messages
         if (parsedMessage.type === 'SEND_MESSAGE') {
-          const { conversationId, senderId, receiverId, content } = parsedMessage;
-
+          const { receiverId,senderId, content } = parsedMessage;
+          //conversation id means the id of the user we intend to send
           // Save the message to the database
+          
           const newMessage = new MessageModel({
-            conversation: conversationId,
+            receiverId: receiverId,
             sender: senderId,
             content,
             sentAt: new Date(),
@@ -55,11 +57,10 @@ export class WebSocketServer {
 
         // Handle fetching messages between users
         if (parsedMessage.type === 'GET_MESSAGES') {
-          const { conversationId } = parsedMessage;
+          const { receiverId } = parsedMessage;
 
           try {
-            const messages = await MessageModel.find({ conversation: conversationId })
-              .populate('sender') // Assuming you want to include sender info
+            const messages = await MessageModel.find({ receiverId: receiverId },"content sentAt")
               .sort({ sentAt: 1 }); // Sort messages by sent date
 
             // Send the messages back to the requesting user

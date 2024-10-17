@@ -3,7 +3,7 @@ import { IConversation } from './conversation.model';
 import { IUser } from './user.model';
 
 export interface IMessage extends Document {
-  conversation: IConversation['_id'];
+  receiverId: IConversation['_id'];
   sender: IUser['_id'];
   content: string;
   sentAt: Date;
@@ -11,7 +11,7 @@ export interface IMessage extends Document {
 
 const messageSchema = new Schema<IMessage>(
   {
-    conversation: {
+    receiverId: {
       type: Schema.Types.ObjectId,
       ref: 'Conversation',
       required: true,

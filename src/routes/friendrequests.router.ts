@@ -11,10 +11,10 @@ export const friendrequestRouter = (): Router => {
 
     router.post('/create',authMiddleware, createFriendRequest);
     router.get('/:userId',authMiddleware, getFriendRequestsForUser);
-    router.get("/:requestid/acceptfriendrequest",authMiddleware, acceptFriendRequest);
-    router.get("/:requestid/rejectfriendrequest",authMiddleware, rejectFriendRequest);
+    router.get("/:requestId/acceptfriendrequest",authMiddleware, acceptFriendRequest);
+    router.get("/:requestId/rejectfriendrequest",authMiddleware, rejectFriendRequest);
     router.get("/:userId/friends",authMiddleware, getUserFriends);
 
     return router;
   }; 
-  
+   

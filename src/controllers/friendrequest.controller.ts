@@ -38,7 +38,6 @@ export const getFriendRequestsForUser =asyncHandler( async (req: AuthRequest, re
       .populate('sender', 'name email') // Optionally populate sender details
       .exec();
 
-    res.status(200).json(requests);
     return apiResponse(res,200,{data:requests});
   } catch (error) {
     // console.error('Error fetching friend requests:', error);
@@ -52,13 +51,13 @@ export const getUserFriends =asyncHandler( async (req: AuthRequest, res: Respons
       const userId  = req.user.id;
 
       // Find the document by userId
-      const friendsList = await Friends.findOne({ userId }).populate("friends.friendId","username").exec();
+      const friendsList = await Friends.findOne({ userId }).exec();
 
       if (!friendsList) {
           return apiResponse(res,404,{ message: "User's friends not found" });
       }
 
-      return apiResponse(res,200,{data:friendsList});
+      return apiResponse(res,200,{data:friendsList.friends});
   } catch (error) {
       // console.error("Error fetching user friends:", error);
       return apiResponse(res,500,{ message: "Server error" })

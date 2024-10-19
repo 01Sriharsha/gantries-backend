@@ -18,8 +18,9 @@
 import express, { Application } from 'express';
 import { config } from './config';
 import { loaders } from './config/loaders';
-import { WebSocketServer } from './lib/websocket';
+import { ChatSocket } from './sockets/chat';
 import http from 'http';
+
 
 
 async function init() {
@@ -31,12 +32,11 @@ async function init() {
   await loaders({ app });
 
   
-  // Create HTTP server
   const httpServer = http.createServer(app);
 
-  // Create and start WebSocket server
-  const webSocketServer = new WebSocketServer(app);
-  webSocketServer.start(httpServer);
+// Initialize Socket.IO
+const socketServer = new ChatSocket(httpServer);
+socketServer.start();
 
   // Start the Express server
   httpServer.listen(PORT, () => {

@@ -14,7 +14,7 @@ import { friendrequestRouter } from "./friendrequests.router";
 // import {friendsRouter} from "./friends.router";
 // import {acceptRejectRouter} from "./acceptorreject.route";
 import { conversationRouter } from "./conversation.router";
-
+import { eventRouter } from "./event.route";
 export const globalRouter = (): Router => {
   const router = Router();
 
@@ -29,6 +29,6 @@ export const globalRouter = (): Router => {
   router.use("/upload", authMiddleware, uploadRouter());
   router.use("/friendrequest",authMiddleware,friendrequestRouter());
   router.use("/conversation",authMiddleware,conversationRouter());
-
+  router.use("/event",authMiddleware,eventRouter())
   return router;
 };

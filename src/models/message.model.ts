@@ -3,20 +3,20 @@ import { IConversation } from './conversation.model';
 import { IUser } from './user.model';
 
 export interface IMessage extends Document {
-  conversation: IConversation['_id'];
-  sender: IUser['_id'];
+  receiverId: IUser['_id'];
+  senderId: IUser['_id'];
   content: string;
   sentAt: Date;
 }
 
 const messageSchema = new Schema<IMessage>(
   {
-    conversation: {
+    receiverId: {
       type: Schema.Types.ObjectId,
-      ref: 'Conversation',
+      ref: 'User',
       required: true,
     },
-    sender: {
+    senderId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,

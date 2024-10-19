@@ -11,6 +11,7 @@ const conversationSchema = new Schema<IConversation>({
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+      unique:true
     },
   ],
 });

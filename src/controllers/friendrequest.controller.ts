@@ -8,27 +8,59 @@ import { apiResponse } from "../util/api-response";
 import { Friends } from "../models/friends.model";
 import { UserModel } from "../models/user.model";
 // Create a new friend request
-export const createFriendRequest =asyncHandler( async (req: AuthRequest, res: Response)=> {
-    try {
-      const sender = req.user.id; // Extract sender ID from authenticated user
-      const { receiver } = req.body; // Extract receiver ID from request body
+// export const createFriendRequest =asyncHandler( async (req: AuthRequest, res: Response)=> {
+//     try {
+//       const sender = req.user.id; // Extract sender ID from authenticated user
+//       const { receiver } = req.body; // Extract receiver ID from request body
   
-      if (!sender || !Types.ObjectId.isValid(receiver)) {
-        return apiResponse(res,400,{ message: "Invalid sender or receiver ID." });
-      }
-      // Create and save a new friend request
-      const friendRequest = new FriendRequest({
-        sender:sender,
-        receiver:receiver,
-      });
+//       if (!sender || !Types.ObjectId.isValid(receiver)) {
+//         return apiResponse(res,400,{ message: "Invalid sender or receiver ID." });
+//       }
+//       // Create and save a new friend request
+//       const friendRequest = new FriendRequest({
+//         sender:sender,
+//         receiver:receiver,
+//       });
 
-      await friendRequest.save();
-      return apiResponse(res,201,{message:"Friend request sent successfully"});
-    } catch (error) {
-    //   console.error('Error creating friend request:', error);
-      return apiResponse(res,500,{message:'Failed to create friend request.'})
+//       await friendRequest.save();
+//       return apiResponse(res,201,{message:"Friend request sent successfully"});
+//     } catch (error) {
+//     //   console.error('Error creating friend request:', error);
+//       return apiResponse(res,500,{message:'Failed to create friend request.'})
+//     }
+//   });
+export const createFriendRequest = asyncHandler(async (req: AuthRequest, res: Response) => {
+  try {
+    const sender = req.user.id; // Extract sender ID from authenticated user
+    const { receiver } = req.body; // Extract receiver ID from request body
+
+    // Validate sender and receiver IDs
+    if (!sender || !Types.ObjectId.isValid(receiver)) {
+      return apiResponse(res, 400, { message: "Invalid sender or receiver ID." });
     }
-  });
+
+    // Check if they are already friends
+    const senderFriends = await Friends.findOne({ userId: sender, "friends.friendId": receiver });
+    const receiverFriends = await Friends.findOne({ userId: receiver, "friends.friendId": sender });
+
+    if (senderFriends || receiverFriends) {
+      return apiResponse(res, 400, { message: "You are already friends." });
+    }
+
+    // Create and save a new friend request
+    const friendRequest = new FriendRequest({
+      sender: sender,
+      receiver: receiver,
+    });
+
+    await friendRequest.save();
+    return apiResponse(res, 201, { message: "Friend request sent successfully" });
+  } catch (error) {
+    // console.error('Error creating friend request:', error);
+    return apiResponse(res, 500, { message: 'Failed to create friend request.' });
+  }
+});
+
 
 // Get all friend requests for a specific user
 export const getFriendRequestsForUser =asyncHandler( async (req: AuthRequest, res: Response) => {

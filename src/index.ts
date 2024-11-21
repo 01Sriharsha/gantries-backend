@@ -1,4 +1,3 @@
-
 // import express from "express";
 // import { config } from "./config";
 // import { loaders } from "./config/loaders";
@@ -15,13 +14,12 @@
 
 // init();
 
-import express, { Application } from 'express';
-import { config } from './config';
-import { loaders } from './config/loaders';
-import { ChatSocket } from './sockets/chat';
-import http from 'http';
-
-
+import express, { Application } from "express";
+import { config } from "./config";
+import { loaders } from "./config/loaders";
+import { ChatSocket } from "./sockets/chat";
+import http from "http";
+import { apiResponse } from "./util/api-response";
 
 async function init() {
   const app: Application = express();
@@ -31,12 +29,15 @@ async function init() {
 
   await loaders({ app });
 
-  
   const httpServer = http.createServer(app);
 
-// Initialize Socket.IO
-const socketServer = new ChatSocket(httpServer);
-socketServer.start();
+  // Initialize Socket.IO
+  const socketServer = new ChatSocket(httpServer);
+  socketServer.start();
+
+  app.get("/hello", (req, res) => {
+    return apiResponse(res, 200, { message: "Hello from gantries server!" });
+  });
 
   // Start the Express server
   httpServer.listen(PORT, () => {

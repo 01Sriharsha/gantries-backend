@@ -13,6 +13,8 @@ export const cookie = {
   options: {
     httpOnly: true,
     path: "/",
+    secure : true,
+    sameSite : "strict",
     maxAge: 3600 * 1000,
   } as CookieOptions,
 };

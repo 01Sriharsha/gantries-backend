@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 import { CookieOptions } from "express";
 
-config()
+config();
 
 export const ROLES = {
   STUDENT: "STUDENT",
@@ -13,8 +13,8 @@ export const cookie = {
   options: {
     httpOnly: true,
     path: "/",
-    secure : true,
-    sameSite : "strict",
+    secure: Boolean(process.env.SECURE),
+    sameSite: process.env.SAME_SITE,
     maxAge: 3600 * 1000,
   } as CookieOptions,
 };

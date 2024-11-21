@@ -34,7 +34,6 @@ export const StudentSchema = z.object({
     .max(500, { message: "Bio should not exceed 500 characters" })
     .optional(),
   aim: z.string().nonempty({ message: "Aim is required" }),
-  plan: z.string().nonempty({ message: "Plan is required" }),
   gender: z.string().optional(),
   profilePicture: z.string().optional(),
   socialLinks: z

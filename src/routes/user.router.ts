@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { getUserById, saveUserInfo } from "../controllers/user.controller";
+import {
+  getAllUsers,
+  getUserById,
+  saveUserInfo,
+} from "../controllers/user.controller";
 
 /** User Routes */
 export const userRouter = (): Router => {
@@ -8,6 +12,7 @@ export const userRouter = (): Router => {
 
   router.post("/basic-info", authMiddleware, saveUserInfo);
   router.get("/:id", getUserById);
+  router.get("/", getAllUsers);
 
   return router;
 };

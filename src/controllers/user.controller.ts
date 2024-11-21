@@ -66,9 +66,17 @@ export const getUserById = asyncHandler(async (req, res) => {
   if (user.role === "STUDENT") {
     const student = await StudentModel.findOne({ user_id: user._id });
     return apiResponse(res, 200, {
-      data: { ...user.toObject(), student: student.toObject() },
+      data: { ...user.toObject(), student: student?.toObject() || null },
     });
   }
 
   return apiResponse(res, 200, { data: user.toObject() });
+});
+
+export const getAllUsers = asyncHandler(async (req, res) => {
+  const users = await UserModel.find();
+  return apiResponse(res, 200, {
+    data: users,
+    message: "Users fetched successfully!!",
+  });
 });

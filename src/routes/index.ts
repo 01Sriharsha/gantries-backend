@@ -15,6 +15,7 @@ import { friendrequestRouter } from "./friendrequests.router";
 // import {acceptRejectRouter} from "./acceptorreject.route";
 import { conversationRouter } from "./conversation.router";
 import { eventRouter } from "./event.route";
+import { notificationRouter } from "./notification.router";
 export const globalRouter = (): Router => {
   const router = Router();
 
@@ -24,11 +25,12 @@ export const globalRouter = (): Router => {
   router.use("/college", authMiddleware, collegeRouter());
   router.use("/tag", authMiddleware, tagRouter());
   router.use("/community", authMiddleware, communityRouter());
-  router.use("/post", authMiddleware, postRouter());
+  router.use("/post", postRouter());
   router.use("/comment", authMiddleware, commentRouter());
   router.use("/upload", authMiddleware, uploadRouter());
-  router.use("/friendrequest",authMiddleware,friendrequestRouter());
-  router.use("/conversation",authMiddleware,conversationRouter());
-  router.use("/event",authMiddleware,eventRouter())
+  router.use("/friendrequest", authMiddleware, friendrequestRouter());
+  router.use("/conversation", authMiddleware, conversationRouter());
+  router.use("/event", authMiddleware, eventRouter());
+  router.use("/notification", authMiddleware, notificationRouter());
   return router;
 };

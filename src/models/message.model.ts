@@ -1,24 +1,30 @@
-import { Schema, model, Document } from 'mongoose';
-import { IConversation } from './conversation.model';
-import { IUser } from './user.model';
+import { Schema, model, Document } from "mongoose";
+import { IConversation } from "./conversation.model";
+import { IUser } from "./user.model";
 
 export interface IMessage extends Document {
-  receiverId: IUser['_id'];
-  senderId: IUser['_id'];
+  conversationId: IConversation["_id"];
+  recieverId: IUser["_id"];
+  senderId: IUser["_id"];
   content: string;
   sentAt: Date;
 }
 
 const messageSchema = new Schema<IMessage>(
   {
-    receiverId: {
+    conversationId: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "Conversation",
+      required: true,
+    },
+    recieverId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     senderId: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     content: {
@@ -33,4 +39,4 @@ const messageSchema = new Schema<IMessage>(
   { timestamps: true }
 );
 
-export const MessageModel = model<IMessage>('Message', messageSchema);
+export const MessageModel = model<IMessage>("Message", messageSchema);

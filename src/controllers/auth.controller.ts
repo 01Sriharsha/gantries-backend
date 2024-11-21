@@ -65,6 +65,7 @@ export const login = asyncHandler(async (req, res) => {
   if (error) {
     return res.status(400).json({ message: error.errors[0].message });
   }
+  console.log(data);
   const existingUser = await db.User.findOne({ phone: data.phone });
 
   if (!existingUser) {
@@ -85,7 +86,7 @@ export const login = asyncHandler(async (req, res) => {
       `Your verification OTP for Gantries By eSamudaay is: ${verifyOTP}`
     );
     return res.status(400).json({
-      message: "You have not verified the phone number! Please verify it!!",
+      message: "You have NOT VERIFIED the phone number! Please verify it!!",
     });
   }
 
@@ -125,7 +126,7 @@ export const logout = asyncHandler(async (req: AuthRequest, res) => {
     req.user = null;
   }
   res.cookie(cookie.name, null, { ...cookie.options, expires: new Date(0) });
-  res.status(200).json({ message: "Logged out successfully" });
+  return res.status(200).json({ message: "Logged out successfully" });
 });
 
 /** OTP verification endpoint */
@@ -159,18 +160,16 @@ export const verifyOTP = asyncHandler(async (req, res) => {
   const token = await generateJWTToken(user.id || user._id, user.phone);
   //add cookie
   res.cookie(cookie.name, token, cookie.options);
-  return res
-    .status(200)
-    .json({
-      message: `Verification successfull! Welcome ${username}`,
-      data: verifiedUser,
-    });
+  return res.status(200).json({
+    message: `Verification successfull! Welcome ${username}`,
+    data: verifiedUser,
+  });
 });
 
 /** Authenticates the current logged in user whenever hit to this endpoint */
 export const authenticateMe = asyncHandler(async (req: AuthRequest, res) => {
   if (!req.user) {
-    res.status(401).json({ message: "Unauthorized user" });
+    return res.status(401).json({ message: "Unauthorized user" });
   }
   return res.status(200).json({ message: "Authenticated!" });
 });

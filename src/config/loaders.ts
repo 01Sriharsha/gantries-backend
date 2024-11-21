@@ -18,7 +18,16 @@ export const loaders = async ({
   app.use(express.json());
 
   //Enable cors
-  app.use(cors({ credentials: true, origin: config.client_url }));
+  app.use(
+    cors({
+      credentials: true,
+      origin: [
+        process.env.CLIENT_URL,
+        "http://localhost:3000",
+        "http://localhost:3001",
+      ],
+    })
+  );
 
   //For cookie parse
   app.use(cookieParser());

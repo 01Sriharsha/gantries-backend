@@ -2,7 +2,7 @@ import { Request } from "express";
 import { Document } from "mongoose";
 
 export interface AuthRequest extends Request {
-  user: { id: string; email: string };
+  user: { id: string; email: string;username:string };
 }
 
 export type User = {

@@ -11,7 +11,6 @@ export const authMiddleware = async (
   next: NextFunction
 ) => {
   const token = req.cookies[cookie.name];
-
   if (!token) {
     console.error("❌ Token not found!");
     // return res.status(401).json({ message: "Unauthorized" });
@@ -22,12 +21,12 @@ export const authMiddleware = async (
     const decoded: any = jwt.verify(token, config.jwt_secret);
     const user = await UserModel.findById(decoded.id).exec();
     if (user) {
-      req.user = { id: user._id as string, email: user.email };
+      req.user = { id: user._id as string, email: user.email , username : user.username };
       return next();
     }
   } catch (error: any) {
     console.error("❌ Auth Error", error.message);
     res.cookie(cookie.name , "" , {expires : new Date(0)})
-    res.status(401).json({ message: "Not authorized, token failed" });
+    return res.status(401).json({ message: "Not authorized, token failed" });
   }
 };

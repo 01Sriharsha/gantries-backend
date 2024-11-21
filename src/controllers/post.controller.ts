@@ -45,7 +45,7 @@ export const createPost = asyncHandler(
 );
 
 // Get all posts
-export const getAllPosts = asyncHandler(async (req, res: Response) => {
+export const getAllPosts = asyncHandler(async (req : AuthRequest, res: Response) => {
   // const posts = await PostModel.find()
   //   .populate("createdBy", "_id firstname lastname email")
   //   .populate("community", "_id name description");
@@ -70,10 +70,18 @@ export const getAllPosts = asyncHandler(async (req, res: Response) => {
   for (let i = 0; i < posts.length; i++) {
     const post = posts[i];
     let response = { ...post.toObject(), isLiked: false };
+
+    console.log("user" , req.user);
+    
+
     if (req.user) {
+      console.log("logged in");
+      
       const isLiked = post.likes.includes(req.user.id);
       response = { ...response, isLiked };
+      console.log({response});
     }
+    
     postsArr.push(response);
   }
 

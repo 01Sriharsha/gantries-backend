@@ -7,7 +7,7 @@ export const getAllColleges = asyncHandler(async (req, res) => {
     collegeName: { $regex: query as string, $options: "i" },
   }).limit(20); // Limit the results for efficiency
 
-  return res.json(colleges);
+  return res.json({data : colleges});
 });
 
 export const createCollege = asyncHandler(async (req, res) => {

@@ -34,10 +34,6 @@ const studentSchema = new Schema<IStudent>(
       type: String,
       required: true,
     },
-    plan: {
-      type: String,
-      required: true,
-    },
     interests: {
       type: [String],
       // required: true,

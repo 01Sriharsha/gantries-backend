@@ -14,13 +14,13 @@ import {
 export const postRouter = (): Router => {
   const router = Router();
 
-  router.post("/", createPost);
-  router.get("/", getAllPosts);
-  router.get("/community/:communityId", getAllPostsByCommunity);
-  router.get("/:id" ,  getPostById);
-  router.put("/:id", updatePost);
-  router.delete("/:id", deletePost);
-  router.post("/:id/like", toggleLikePost);
+  router.post("/", authMiddleware, createPost);
+  router.get("/", authMiddleware, getAllPosts);
+  router.get("/community/:communityId", authMiddleware, getAllPostsByCommunity);
+  router.get("/:id", authMiddleware, getPostById);
+  router.put("/:id", authMiddleware, updatePost);
+  router.delete("/:id", authMiddleware, deletePost);
+  router.post("/:id/like", authMiddleware, toggleLikePost);
 
   return router;
 };
